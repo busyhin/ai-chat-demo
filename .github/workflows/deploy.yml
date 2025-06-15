@@ -6,10 +6,10 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -18,14 +18,16 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build with Vite
+      - name: Create .env file from secrets
         run: |
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
           echo "VITE_ACCESS_KEY=${{ secrets.VITE_ACCESS_KEY }}" >> .env
           echo "VITE_SECRET_ACCESS_KEY=${{ secrets.VITE_SECRET_ACCESS_KEY }}" >> .env
-          npm run build
+
+      - name: Build Vite project
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
