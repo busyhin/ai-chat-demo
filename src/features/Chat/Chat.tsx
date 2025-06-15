@@ -2,7 +2,7 @@ import { LanguageToggle } from "@/components/LanguageToggle/LanguageToggle.tsx";
 import { MessageSenderEnum } from "@/features/Chat/constants.ts";
 import { ChatMessage } from "@/features/Chat/components/ChatMessage/ChatMessage.tsx";
 import { ChatInput } from "@/features/Chat/components/ChatInput/ChatInput.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { sendMessage } from "@/api/sendMessage.ts";
 import { TypingDots } from "@/features/Chat/components/TypingDots/TypingDots.tsx";
@@ -11,7 +11,7 @@ import { ChatErrorAlert } from "@/features/Chat/components/ChatErrorAlert/ChatEr
 type MessageType = {
     sender: MessageSenderEnum;
     message: string;
-}
+};
 
 export const Chat = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
@@ -22,10 +22,7 @@ export const Chat = () => {
         isError,
     } = useMutation({
         mutationFn: async (message: string) => {
-            setMessages((prev) => [
-                ...prev,
-                { sender: MessageSenderEnum.USER, message: message },
-            ]);
+            setMessages((prev) => [...prev, { sender: MessageSenderEnum.USER, message: message }]);
             await new Promise((res) => setTimeout(res, 1000));
             return sendMessage(message);
         },
@@ -39,6 +36,11 @@ export const Chat = () => {
             console.error("Error sending message:", error);
         },
     });
+
+    useEffect(() => {
+        console.log("deploy test", import.meta.env.VITE_ACCESS_KEY);
+        console.log("deploy test", import.meta.env.VITE_API_URL);
+    }, []);
 
     return (
         <div className="w-full h-full flex">
